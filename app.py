@@ -93,7 +93,7 @@ Owner concerns / behavior description:
         content.append({"type": "image_url", "image_url": image_data_url})
 
     response = client.responses.create(
-        model=model,
+        model = "gpt-4.1-mini",
         input=[{"role": "user", "content": content}],
     )
 
