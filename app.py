@@ -28,19 +28,9 @@ def b64_data_url(uploaded_file) -> str:
     return f"data:{mime};base64,{b64}"
 
 def run_triage(pet_profile: dict, concerns: str, image_data_url: str | None) -> str:
-    """
-    Ask the model to provide triage-style guidance (not diagnosis).
-    Returns formatted markdown.
-    """
-    # Choose a vision-capable model if you pass an image.
-    # If you want: set model="gpt-4.1" (commonly used for vision) or another vision-capable model in your account.
-    model = "gpt-4.1"
+    model = "gpt-4.1-mini"
 
-    # Build the input content
-    content = [
-        {
-            "type": "text",
-            "text": f"""
+    prompt_text = f"""
 You are a pet health triage assistant. You are NOT a veterinarian and you must not diagnose.
 Your job: help the user understand urgency, safe do/don't steps, and what to ask/tell a vet.
 
@@ -86,14 +76,14 @@ Pet profile:
 Owner concerns / behavior description:
 {concerns}
 """.strip()
-        }
-    ]
+
+    content = [{"type": "input_text", "text": prompt_text}]
 
     if image_data_url:
-        content.append({"type": "image_url", "image_url": image_data_url})
+        content.append({"type": "input_image", "image_url": image_data_url})
 
     response = client.responses.create(
-        model = "gpt-4.1-mini",
+        model=model,
         input=[{"role": "user", "content": content}],
     )
 
